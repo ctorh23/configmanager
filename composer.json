@@ -1,0 +1,19 @@
+{
+    "name": "ctorh23/configmanager",
+    "description": "Configuration management library for PHP applications.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ctorh23\\ConfigManager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Stoyan Dimitrov"
+        }
+    ],
+    "require": {
+        "php": "^8.3"
+    }
+}
