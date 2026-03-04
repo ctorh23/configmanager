@@ -2,4 +2,5 @@
 <phive xmlns="https://phar.io/phive">
   <phar name="phpunit" version="^12.5.0" installed="12.5.14" location="./tools/PHPUnit/phpunit" copy="true"/>
   <phar name="php-cs-fixer" version="^3.94.2" installed="3.94.2" location="./tools/PHP-CS-Fixer/php-cs-fixer" copy="true"/>
+  <phar name="phpstan" version="^2.1.40" installed="2.1.40" location="./tools/PHPStan/phpstan" copy="true"/>
 </phive>

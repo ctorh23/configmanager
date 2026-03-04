@@ -1,0 +1,5 @@
+parameters:
+	level: max
+	tmpDir: var/build/phpstan
+	paths:
+		- src
