@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Property Ctorh23\\ConfigManager\\ConfigManager\:\:\$configDir is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/ConfigManager.php
