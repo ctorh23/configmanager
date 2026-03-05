@@ -6,6 +6,9 @@ namespace Ctorh23\ConfigManager;
 
 final class ConfigManager
 {
+    /**
+     * The directory where configuration files resides.
+     */
     private string $configDir;
 
     public function __construct(string $configDir)
@@ -19,12 +22,18 @@ final class ConfigManager
         $this->configDir = $configDir;
     }
 
+    /**
+     * Returns a configuration value.
+     */
     public function get(string $key): mixed
     {
         return 'MyApp';
     }
 
-    private function verifyDir($dir): bool
+    /**
+     * Verify that the given argument is directory and is accessible.
+     */
+    private function verifyDir(string $dir): bool
     {
         return \is_dir($dir) && \is_readable($dir);
     }
