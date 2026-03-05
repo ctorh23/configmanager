@@ -7,34 +7,136 @@ namespace Ctorh23\ConfigManager;
 final class ConfigManager
 {
     /**
+     * The separator for the complex configuration keys.
+     */
+    private const KEY_SEPARATOR = '.';
+
+    /**
      * The directory where configuration files resides.
      */
     private string $configDir;
+
+    /**
+     * The array containing configuration values.
+     *
+     * @var array<string, mixed>
+     */
+    private array $settings = [];
 
     public function __construct(string $configDir)
     {
         $configDir = \rtrim($configDir, \DIRECTORY_SEPARATOR);
 
-        if (!$this->verifyDir($configDir)) {
-            throw new \InvalidArgumentException("The directory {$configDir} doesn not exist or is not accessible!");
+        if (!$this->validateDir($configDir)) {
+            throw new \InvalidArgumentException(\sprintf("The directory '%s' does not exist or is not accessible!", $configDir));
         }
 
         $this->configDir = $configDir;
     }
 
     /**
-     * Returns a configuration value.
+     * Reads a configuration value.
      */
     public function get(string $key): mixed
     {
+        if (!$this->validateKey($key)) {
+            throw new \InvalidArgumentException(\sprintf("The key %s cannot starts or ends with the '%s' character!", $key, self::KEY_SEPARATOR));
+        }
+
+        if ($this->isKeyComplex($key)) {
+            return $this->getComplex($key);
+        } else {
+            return $this->getSimple($key);
+        }
+    }
+
+    /**
+     * Creates a configuration value.
+     */
+    public function set(string $key, mixed $value): self
+    {
+        if (!$this->validateKey($key)) {
+            throw new \InvalidArgumentException(\sprintf("The key %s cannot starts or ends with the '%s' character!", $key, self::KEY_SEPARATOR));
+        }
+
+        if ($this->isKeyComplex($key)) {
+            $this->setComplex($key, $value);
+        } else {
+            $this->setSimple($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Reads configuration value with complex key.
+     */
+    private function getComplex(string $key): mixed
+    {
+        if (!$this->isKeyComplex($key)) {
+            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys missing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+        }
+
         return 'MyApp';
     }
 
     /**
-     * Verify that the given argument is directory and is accessible.
+     * Reads configuration value with simple key.
      */
-    private function verifyDir(string $dir): bool
+    private function getSimple(string $key): mixed
+    {
+        if ($this->isKeyComplex($key)) {
+            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys containing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+        }
+
+        return $this->settings[$key] ?? null;
+    }
+
+    /**
+     * Creates configuration value with complex key.
+     */
+    public function setComplex(string $key, mixed $value): void
+    {
+        if (!$this->isKeyComplex($key)) {
+            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys missing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+        }
+
+        //
+    }
+
+    /**
+     * Creates configuration value with simple key.
+     */
+    public function setSimple(string $key, mixed $value): void
+    {
+        if ($this->isKeyComplex($key)) {
+            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys containing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+        }
+
+        $this->settings[$key] = $value;
+    }
+
+    /**
+     * Determines if the key is complex or simple, i.e. containing or missing the KEY_SEPARATOR character.
+     */
+    private function isKeyComplex(string $key): bool
+    {
+        return \str_contains($key, self::KEY_SEPARATOR);
+    }
+
+    /**
+     * Ensure that the given argument is directory and is accessible.
+     */
+    private function validateDir(string $dir): bool
     {
         return \is_dir($dir) && \is_readable($dir);
+    }
+
+    /**
+     * Ensure that a configuration key does not start or end with the KEY_SEPARATOR character.
+     */
+    private function validateKey(string $key): bool
+    {
+        return !\str_starts_with($key, self::KEY_SEPARATOR) && !\str_ends_with($key, self::KEY_SEPARATOR);
     }
 }
