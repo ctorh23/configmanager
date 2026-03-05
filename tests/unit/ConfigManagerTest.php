@@ -9,14 +9,27 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ConfigManager::class)]
-class ConfigManagerTest extends TestCase
+final class ConfigManagerTest extends TestCase
 {
+    private static string $fixturesDir;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::$fixturesDir = \dirname(__DIR__) . '/fixtures/config';
+    }
+
     /**
      * @covers ConfigManager::get()
      */
     public function testGetReturnsExpectedValue(): void
     {
-        $confMan = new ConfigManager(__DIR__ . '/config');
+        $confMan = new ConfigManager(self::$fixturesDir);
         $this->assertEquals('MyApp', $confMan->get('app.name'));
+    }
+
+    public function testThrowsExceptionWhenDirectoryNotAccessible(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $confMan = new ConfigManager('/not/existing/dir');
     }
 }
