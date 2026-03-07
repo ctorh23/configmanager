@@ -109,7 +109,13 @@ final class ConfigManager implements ConfigManagerInterface
             throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
-        //
+        $keys = $this->splitKey($key);
+        $confItem = &$this->settings;
+        for ($i = 0, $cnt = \count($keys); $i < $cnt - 1; $i++) {
+            $confItem[$keys[$i]] ??= [];
+            $confItem = &$confItem[$keys[$i]];
+        }
+        $confItem[$keys[$cnt - 1]] = $value;
     }
 
     /**
@@ -130,6 +136,16 @@ final class ConfigManager implements ConfigManagerInterface
     private function isKeyComplex(string $key): bool
     {
         return \str_contains($key, self::KEY_SEPARATOR);
+    }
+
+    /**
+     * Split the key based on the KEY_SEPARATOR constant.
+     *
+     * @return array<string>
+     */
+    private function splitKey(string $key): array
+    {
+        return \explode(self::KEY_SEPARATOR, $key);
     }
 
     /**

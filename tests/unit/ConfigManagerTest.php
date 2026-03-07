@@ -74,4 +74,17 @@ final class ConfigManagerTest extends TestCase
         $this->expectException(KeyException::class);
         $confMan->set('not_valid.', 'dummy_value');
     }
+
+    /**
+     * @covers ConfigManager::set()
+     * @covers ConfigManager::setComplex()
+     * @covers ConfigManager::get()
+     * @covers ConfigManager::getComplex()
+     */
+    public function testSetComplexKeyReturnsExpectedValue(): void
+    {
+        $confMan = new ConfigManager(self::$fixturesDir);
+        $confMan->set('database.connection.pgsql.host', 'localhost');
+        $this->assertEquals('localhost', $confMan->get('database.connection.pgsql.host'));
+    }
 }
