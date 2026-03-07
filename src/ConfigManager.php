@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Ctorh23\ConfigManager;
 
+use Ctorh23\ConfigManager\Exception\DirException;
+use Ctorh23\ConfigManager\Exception\KeyException;
+
+/**
+ * The main configuration management class.
+ *
+ * @author Stoyan Dimitrov
+ */
 final class ConfigManager
 {
     /**
@@ -28,7 +36,7 @@ final class ConfigManager
         $configDir = \rtrim($configDir, \DIRECTORY_SEPARATOR);
 
         if (!$this->validateDir($configDir)) {
-            throw new \InvalidArgumentException(\sprintf("The directory '%s' does not exist or is not accessible!", $configDir));
+            throw DirException::directoryNotAccessible($configDir);
         }
 
         $this->configDir = $configDir;
@@ -40,7 +48,7 @@ final class ConfigManager
     public function get(string $key): mixed
     {
         if (!$this->validateKey($key)) {
-            throw new \InvalidArgumentException(\sprintf("The key %s cannot starts or ends with the '%s' character!", $key, self::KEY_SEPARATOR));
+            throw KeyException::badKeyBoundary($key, self::KEY_SEPARATOR);
         }
 
         if ($this->isKeyComplex($key)) {
@@ -56,7 +64,7 @@ final class ConfigManager
     public function set(string $key, mixed $value): self
     {
         if (!$this->validateKey($key)) {
-            throw new \InvalidArgumentException(\sprintf("The key %s cannot starts or ends with the '%s' character!", $key, self::KEY_SEPARATOR));
+            throw KeyException::badKeyBoundary($key, self::KEY_SEPARATOR);
         }
 
         if ($this->isKeyComplex($key)) {
@@ -74,7 +82,7 @@ final class ConfigManager
     private function getComplex(string $key): mixed
     {
         if (!$this->isKeyComplex($key)) {
-            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys missing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+            throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         return 'MyApp';
@@ -86,7 +94,7 @@ final class ConfigManager
     private function getSimple(string $key): mixed
     {
         if ($this->isKeyComplex($key)) {
-            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys containing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+            throw KeyException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         return $this->settings[$key] ?? null;
@@ -98,7 +106,7 @@ final class ConfigManager
     public function setComplex(string $key, mixed $value): void
     {
         if (!$this->isKeyComplex($key)) {
-            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys missing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+            throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         //
@@ -110,7 +118,7 @@ final class ConfigManager
     public function setSimple(string $key, mixed $value): void
     {
         if ($this->isKeyComplex($key)) {
-            throw new \RuntimeException(\sprintf("%s is not intended to be called with keys containing the '%s' character!", __METHOD__, self::KEY_SEPARATOR));
+            throw KeyException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         $this->settings[$key] = $value;
