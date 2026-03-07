@@ -85,7 +85,19 @@ final class ConfigManager implements ConfigManagerInterface
             throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
-        return 'MyApp';
+        $keys = $this->splitKey($key);
+        $filename = \array_shift($keys);
+
+        if (!isset($this->settings[$filename]) && !$this->loadFile($filename)) {
+            return null;
+        }
+
+        $value = $this->settings[$filename];
+        foreach ($keys as $k) {
+            $value = $value[$k] ?? null;
+        }
+
+        return $value;
     }
 
     /**
@@ -146,6 +158,24 @@ final class ConfigManager implements ConfigManagerInterface
     private function splitKey(string $key): array
     {
         return \explode(self::KEY_SEPARATOR, $key);
+    }
+
+    /**
+     * Loads file with configuration settings.
+     */
+    private function loadFile(string $filename): bool
+    {
+        $filePath = $this->configDir . DIRECTORY_SEPARATOR . $filename . '.php';
+        if (\is_file($filePath) && \is_readable($filePath)) {
+            $fileContent = require $filePath;
+            if (!\is_array($fileContent)) {
+                throw new \RuntimeException('Configuration files must return array!');
+            }
+            $this->settings[$filename] = $fileContent;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
