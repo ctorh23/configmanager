@@ -12,7 +12,7 @@ use Ctorh23\ConfigManager\Exception\KeyException;
  *
  * @author Stoyan Dimitrov
  */
-final class ConfigManager
+final class ConfigManager implements ConfigManagerInterface
 {
     /**
      * The separator for the complex configuration keys.
@@ -103,7 +103,7 @@ final class ConfigManager
     /**
      * Creates configuration value with complex key.
      */
-    public function setComplex(string $key, mixed $value): void
+    private function setComplex(string $key, mixed $value): void
     {
         if (!$this->isKeyComplex($key)) {
             throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
@@ -115,7 +115,7 @@ final class ConfigManager
     /**
      * Creates configuration value with simple key.
      */
-    public function setSimple(string $key, mixed $value): void
+    private function setSimple(string $key, mixed $value): void
     {
         if ($this->isKeyComplex($key)) {
             throw KeyException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
