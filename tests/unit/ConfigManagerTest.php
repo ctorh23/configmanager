@@ -9,6 +9,7 @@ use Ctorh23\ConfigManager\Exception\FsException;
 use Ctorh23\ConfigManager\Exception\ValidationException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\BackupGlobals;
 
 #[CoversClass(ConfigManager::class)]
 final class ConfigManagerTest extends TestCase
@@ -114,5 +115,20 @@ final class ConfigManagerTest extends TestCase
         $confMan = new ConfigManager(self::$fixturesDir);
         $this->expectException(ValidationException::class);
         $this->assertEquals('MyApp', $confMan->get('wrong.name'));
+    }
+
+    #[BackupGlobals(true)]
+    public function testReadEnvVar(): void
+    {
+        $confMan = new ConfigManager(self::$fixturesDir);
+
+        \putenv('PGSQL_USER=app_user');
+        $_ENV['PGSQL_PASSWORD'] = 'this-is-a-secret';
+
+        $this->assertEquals('app_user', $confMan->env('PGSQL_USER'));
+        $this->assertEquals('this-is-a-secret', $confMan->env('PGSQL_PASSWORD'));
+        $this->assertEquals('utf8', $confMan->env('PGSQL_CHARSET', 'utf8'));
+        $this->assertNull($confMan->env('MYSQL_USER'));
+
     }
 }
