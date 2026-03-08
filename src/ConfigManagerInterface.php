@@ -24,5 +24,5 @@ interface ConfigManagerInterface
     /**
      * Reads environment variable.
      */
-    public function env(string $var, mixed $default = null): mixed;
+    public function env(string $var, bool|int|float|string|null $default = null): bool|int|float|string|null;
 }

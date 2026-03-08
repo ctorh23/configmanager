@@ -117,6 +117,10 @@ final class ConfigManagerTest extends TestCase
         $this->assertEquals('MyApp', $confMan->get('wrong.name'));
     }
 
+    /**
+     * @covers ConfigManager::env()
+     * @covers ConfigManager::castValue()
+     */
     #[BackupGlobals(true)]
     public function testReadEnvVar(): void
     {
@@ -126,6 +130,7 @@ final class ConfigManagerTest extends TestCase
         $_ENV['PGSQL_PASSWORD'] = 'this-is-a-secret';
         \putenv('PGSQL_PORT=5432');
         \putenv('MYSQL_PERSISTENT=false');
+        \putenv('MYSQL_PREFIX_INDEXES=true');
         \putenv('MYSQL_ENGINE=null');
         \putenv('SLA_UPTIME=99.9');
 
@@ -133,6 +138,7 @@ final class ConfigManagerTest extends TestCase
         $this->assertSame('this-is-a-secret', $confMan->env('PGSQL_PASSWORD'));
         $this->assertSame(5432, $confMan->env('PGSQL_PORT'));
         $this->assertSame(false, $confMan->env('MYSQL_PERSISTENT'));
+        $this->assertSame(true, $confMan->env('MYSQL_PREFIX_INDEXES'));
         $this->assertSame(null, $confMan->env('MYSQL_ENGINE'));
         $this->assertSame(99.9, $confMan->env('SLA_UPTIME'));
         $this->assertSame('utf8', $confMan->env('PGSQL_CHARSET', 'utf8'));

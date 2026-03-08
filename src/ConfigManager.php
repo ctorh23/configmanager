@@ -79,9 +79,15 @@ final class ConfigManager implements ConfigManagerInterface
     /**
      * Reads environment variable.
      */
-    public function env(string $var, mixed $default = null): mixed
+    public function env(string $var, bool|int|float|string|null $default = null): bool|int|float|string|null
     {
-        return $_ENV[$var] ?? getenv($var) ?: $default;
+        if (isset($_ENV[$var])) {
+            return $this->castValue($_ENV[$var]);
+        } elseif (($value = \getenv($var)) !== false) {
+            return $this->castValue($value);
+        } else {
+            return $default;
+        }
     }
 
     /**
@@ -184,6 +190,23 @@ final class ConfigManager implements ConfigManagerInterface
         } else {
             return false;
         }
+    }
+
+    /**
+     * Explicit type casting.
+     */
+    private function castValue(mixed $value): bool|int|float|string|null
+    {
+        if (\is_numeric($value)) {
+            return 0 + $value;
+        }
+
+        return match ($value) {
+            'null' => null,
+            'true' => true,
+            'false' => false,
+            default => \strval($value),
+        };
     }
 
     /**
