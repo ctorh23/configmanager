@@ -45,16 +45,16 @@ final class ConfigManager implements ConfigManagerInterface
     /**
      * Reads a configuration value.
      */
-    public function get(string $key): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
         if (!$this->validateKey($key)) {
             throw ValidationException::badKeyBoundary($key, self::KEY_SEPARATOR);
         }
 
         if ($this->isKeyComplex($key)) {
-            return $this->getComplex($key);
+            return $this->getComplex($key) ?? $default;
         } else {
-            return $this->getSimple($key);
+            return $this->getSimple($key) ?? $default;
         }
     }
 

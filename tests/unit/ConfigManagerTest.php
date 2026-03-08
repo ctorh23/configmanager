@@ -33,6 +33,7 @@ final class ConfigManagerTest extends TestCase
         $confMan->set('app_name', 'MyApp');
         $this->assertEquals('MyApp', $confMan->get('app_name'));
         $this->assertNull($confMan->get('application_name'));
+        $this->assertEquals('UTC', $confMan->get('app_tz', 'UTC'));
     }
 
     /**
@@ -51,8 +52,9 @@ final class ConfigManagerTest extends TestCase
         $this->assertEquals('mariadb.acme.com', $confMan->get('database.connections.mariadb.host'));
         $this->assertEquals('utf8mb4', $confMan->get('database.connections.mariadb.charset'));
         $this->assertEquals('migrations', $confMan->get('database.migrations.table'));
-        $this->assertNull($confMan->get('database.connections.pgsql.charset'));
+        $this->assertNull($confMan->get('database.connections.pgsql.collation'));
         $this->assertNull($confMan->get('db.host'));
+        $this->assertEquals('utf8', $confMan->get('database.connections.pgsql.charset', 'utf8'));
     }
 
     /**
