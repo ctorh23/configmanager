@@ -14,7 +14,7 @@ interface ConfigManagerInterface
     /**
      * Reads a configuration value.
      */
-    public function get(string $key): mixed;
+    public function get(string $key, mixed $default = null): mixed;
 
     /**
      * Creates a configuration value.
