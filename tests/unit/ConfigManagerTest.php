@@ -146,4 +146,19 @@ final class ConfigManagerTest extends TestCase
         $this->assertNull($confMan->env(''));
         $this->assertSame(0, $confMan->env('', 0));
     }
+
+    /**
+     * @covers ConfigManager::env()
+     */
+    #[BackupGlobals(true)]
+    public function testUseEnvVarInConfigFile(): void
+    {
+        $confMan = new ConfigManager(self::$fixturesDir);
+
+        $_ENV['SESSION_TIMEOUT'] = 900;
+
+        $this->assertSame('redis', $confMan->get('session.driver'));
+        $this->assertSame(900, $confMan->get('session.timeout'));
+        $this->assertNull($confMan->get('session.encrypt'));
+    }
 }
