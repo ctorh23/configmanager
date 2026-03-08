@@ -31,6 +31,9 @@ final class ConfigManager implements ConfigManagerInterface
      */
     private array $settings = [];
 
+    /**
+     * @throws FsException
+     */
     public function __construct(string $configDir)
     {
         $configDir = \rtrim($configDir, \DIRECTORY_SEPARATOR);
@@ -44,6 +47,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Reads a configuration value.
+     *
+     * @throws ValidationException
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -60,6 +65,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Creates a configuration value.
+     *
+     * @throws ValidationException
      */
     public function set(string $key, mixed $value): self
     {
@@ -92,6 +99,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Reads configuration value with complex key.
+     *
+     * @throws ValidationException
      */
     private function getComplex(string $key): mixed
     {
@@ -116,6 +125,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Reads configuration value with simple key.
+     *
+     * @throws ValidationException
      */
     private function getSimple(string $key): mixed
     {
@@ -128,6 +139,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Creates configuration value with complex key.
+     *
+     * @throws ValidationException
      */
     private function setComplex(string $key, mixed $value): void
     {
@@ -146,6 +159,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Creates configuration value with simple key.
+     *
+     * @throws ValidationException
      */
     private function setSimple(string $key, mixed $value): void
     {
@@ -176,6 +191,8 @@ final class ConfigManager implements ConfigManagerInterface
 
     /**
      * Loads file with configuration settings.
+     *
+     * @throws ValidationException
      */
     private function loadFile(string $filename): bool
     {
