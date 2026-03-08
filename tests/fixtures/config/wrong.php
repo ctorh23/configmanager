@@ -1,0 +1,5 @@
+<?php
+
+$configs = [
+    'name' => 'MyApp',
+];

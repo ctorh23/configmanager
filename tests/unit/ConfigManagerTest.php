@@ -25,24 +25,34 @@ final class ConfigManagerTest extends TestCase
      * @covers ConfigManager::getSimple()
      * @covers ConfigManager::set()
      * @covers ConfigManager::setSimple()
-     * @covers ConfigManager::validateKey()
+     * @covers ConfigManager::isKeyComplex()
      */
     public function testGetSimpleKeyReturnsExpectedValue(): void
     {
         $confMan = new ConfigManager(self::$fixturesDir);
         $confMan->set('app_name', 'MyApp');
         $this->assertEquals('MyApp', $confMan->get('app_name'));
+        $this->assertNull($confMan->get('application_name'));
     }
 
     /**
      * @covers ConfigManager::get()
      * @covers ConfigManager::getComplex()
-     * @covers ConfigManager::validateKey()
+     * @covers ConfigManager::isKeyComplex()
+     * @covers ConfigManager::splitKey()
+     * @covers ConfigManager::loadFile()
      */
     public function testGetComplexKeyReturnsExpectedValue(): void
     {
         $confMan = new ConfigManager(self::$fixturesDir);
         $this->assertEquals('MyApp', $confMan->get('app.name'));
+        $this->assertEquals('pgsql.acme.com', $confMan->get('database.connections.pgsql.host'));
+        $this->assertEquals(5432, $confMan->get('database.connections.pgsql.port'));
+        $this->assertEquals('mariadb.acme.com', $confMan->get('database.connections.mariadb.host'));
+        $this->assertEquals('utf8mb4', $confMan->get('database.connections.mariadb.charset'));
+        $this->assertEquals('migrations', $confMan->get('database.migrations.table'));
+        $this->assertNull($confMan->get('database.connections.pgsql.charset'));
+        $this->assertNull($confMan->get('db.host'));
     }
 
     /**
@@ -57,6 +67,7 @@ final class ConfigManagerTest extends TestCase
 
     /**
      * @covers ConfigManager::get()
+     * @covers ConfigManager::validateKey()
      */
     public function testGetNotValidKeyThrowsException(): void
     {
@@ -67,6 +78,7 @@ final class ConfigManagerTest extends TestCase
 
     /**
      * @covers ConfigManager::set()
+     * @covers ConfigManager::validateKey()
      */
     public function testSetNotValidKeyThrowsException(): void
     {
@@ -80,11 +92,25 @@ final class ConfigManagerTest extends TestCase
      * @covers ConfigManager::setComplex()
      * @covers ConfigManager::get()
      * @covers ConfigManager::getComplex()
+     * @covers ConfigManager::isKeyComplex()
+     * @covers ConfigManager::splitKey()
      */
     public function testSetComplexKeyReturnsExpectedValue(): void
     {
         $confMan = new ConfigManager(self::$fixturesDir);
+        $this->assertEquals('pgsql.acme.com', $confMan->get('database.connections.pgsql.host'));
         $confMan->set('database.connection.pgsql.host', 'localhost');
         $this->assertEquals('localhost', $confMan->get('database.connection.pgsql.host'));
+    }
+
+    /**
+     * @covers ConfigManager::getComplex()
+     * @covers ConfigManager::loadFile()
+     */
+    public function testGetComplexThrowsExceptionWhenConfigFileIsWrong(): void
+    {
+        $confMan = new ConfigManager(self::$fixturesDir);
+        $this->expectException(ValidationException::class);
+        $this->assertEquals('MyApp', $confMan->get('wrong.name'));
     }
 }
