@@ -9,7 +9,7 @@ namespace Ctorh23\ConfigManager\Exception;
  *
  * @author Stoyan Dimitrov
  */
-final class KeyException extends \DomainException implements ExceptionInterface
+final class ValidationException extends \DomainException implements ExceptionInterface
 {
     public function __construct(string $msg, int $code = 0, ?\Throwable $previous = null)
     {
@@ -29,5 +29,10 @@ final class KeyException extends \DomainException implements ExceptionInterface
     public static function simpleMethodComplexKey(string $method, string $character): self
     {
         return new self(\sprintf("It is not allowed to call the method '%s' with a key containing the '%s' character!", $method, $character));
+    }
+
+    public static function badConfigFileContent(string $filePath): self
+    {
+        return new self(\sprintf("The configuration file '%s' must return an array!", $filePath));
     }
 }

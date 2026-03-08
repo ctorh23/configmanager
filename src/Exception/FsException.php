@@ -9,7 +9,7 @@ namespace Ctorh23\ConfigManager\Exception;
  *
  * @author Stoyan Dimitrov
  */
-final class DirException extends \InvalidArgumentException implements ExceptionInterface
+final class FsException extends \InvalidArgumentException implements ExceptionInterface
 {
     public function __construct(string $msg, int $code = 0, ?\Throwable $previous = null)
     {

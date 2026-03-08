@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Ctorh23\ConfigManagerTests;
 
 use Ctorh23\ConfigManager\ConfigManager;
-use Ctorh23\ConfigManager\Exception\DirException;
-use Ctorh23\ConfigManager\Exception\KeyException;
+use Ctorh23\ConfigManager\Exception\FsException;
+use Ctorh23\ConfigManager\Exception\ValidationException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -51,7 +51,7 @@ final class ConfigManagerTest extends TestCase
      */
     public function testThrowsExceptionWhenInstantiatingWithNotAccessibleDirectory(): void
     {
-        $this->expectException(DirException::class);
+        $this->expectException(FsException::class);
         $confMan = new ConfigManager('/not/existing/dir');
     }
 
@@ -61,7 +61,7 @@ final class ConfigManagerTest extends TestCase
     public function testGetNotValidKeyThrowsException(): void
     {
         $confMan = new ConfigManager(self::$fixturesDir);
-        $this->expectException(KeyException::class);
+        $this->expectException(ValidationException::class);
         $confMan->get('.not_valid');
     }
 
@@ -71,7 +71,7 @@ final class ConfigManagerTest extends TestCase
     public function testSetNotValidKeyThrowsException(): void
     {
         $confMan = new ConfigManager(self::$fixturesDir);
-        $this->expectException(KeyException::class);
+        $this->expectException(ValidationException::class);
         $confMan->set('not_valid.', 'dummy_value');
     }
 

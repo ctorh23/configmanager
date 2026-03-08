@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ctorh23\ConfigManager;
 
-use Ctorh23\ConfigManager\Exception\DirException;
-use Ctorh23\ConfigManager\Exception\KeyException;
+use Ctorh23\ConfigManager\Exception\FsException;
+use Ctorh23\ConfigManager\Exception\ValidationException;
 
 /**
  * The main configuration management class.
@@ -36,7 +36,7 @@ final class ConfigManager implements ConfigManagerInterface
         $configDir = \rtrim($configDir, \DIRECTORY_SEPARATOR);
 
         if (!$this->validateDir($configDir)) {
-            throw DirException::directoryNotAccessible($configDir);
+            throw FsException::directoryNotAccessible($configDir);
         }
 
         $this->configDir = $configDir;
@@ -48,7 +48,7 @@ final class ConfigManager implements ConfigManagerInterface
     public function get(string $key): mixed
     {
         if (!$this->validateKey($key)) {
-            throw KeyException::badKeyBoundary($key, self::KEY_SEPARATOR);
+            throw ValidationException::badKeyBoundary($key, self::KEY_SEPARATOR);
         }
 
         if ($this->isKeyComplex($key)) {
@@ -64,7 +64,7 @@ final class ConfigManager implements ConfigManagerInterface
     public function set(string $key, mixed $value): self
     {
         if (!$this->validateKey($key)) {
-            throw KeyException::badKeyBoundary($key, self::KEY_SEPARATOR);
+            throw ValidationException::badKeyBoundary($key, self::KEY_SEPARATOR);
         }
 
         if ($this->isKeyComplex($key)) {
@@ -82,7 +82,7 @@ final class ConfigManager implements ConfigManagerInterface
     private function getComplex(string $key): mixed
     {
         if (!$this->isKeyComplex($key)) {
-            throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
+            throw ValidationException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         $keys = $this->splitKey($key);
@@ -106,7 +106,7 @@ final class ConfigManager implements ConfigManagerInterface
     private function getSimple(string $key): mixed
     {
         if ($this->isKeyComplex($key)) {
-            throw KeyException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
+            throw ValidationException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         return $this->settings[$key] ?? null;
@@ -118,7 +118,7 @@ final class ConfigManager implements ConfigManagerInterface
     private function setComplex(string $key, mixed $value): void
     {
         if (!$this->isKeyComplex($key)) {
-            throw KeyException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
+            throw ValidationException::complexMethodSimpleKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         $keys = $this->splitKey($key);
@@ -136,7 +136,7 @@ final class ConfigManager implements ConfigManagerInterface
     private function setSimple(string $key, mixed $value): void
     {
         if ($this->isKeyComplex($key)) {
-            throw KeyException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
+            throw ValidationException::simpleMethodComplexKey(__METHOD__, self::KEY_SEPARATOR);
         }
 
         $this->settings[$key] = $value;
@@ -169,7 +169,7 @@ final class ConfigManager implements ConfigManagerInterface
         if (\is_file($filePath) && \is_readable($filePath)) {
             $fileContent = require $filePath;
             if (!\is_array($fileContent)) {
-                throw new \RuntimeException('Configuration files must return array!');
+                throw ValidationException::badConfigFileContent($filePath);
             }
             $this->settings[$filename] = $fileContent;
             return true;
