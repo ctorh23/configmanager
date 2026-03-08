@@ -20,4 +20,9 @@ interface ConfigManagerInterface
      * Creates a configuration value.
      */
     public function set(string $key, mixed $value): self;
+
+    /**
+     * Reads environment variable.
+     */
+    public function env(string $var, mixed $default = null): mixed;
 }

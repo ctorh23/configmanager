@@ -129,6 +129,7 @@ final class ConfigManagerTest extends TestCase
         $this->assertEquals('this-is-a-secret', $confMan->env('PGSQL_PASSWORD'));
         $this->assertEquals('utf8', $confMan->env('PGSQL_CHARSET', 'utf8'));
         $this->assertNull($confMan->env('MYSQL_USER'));
-
+        $this->assertNull($confMan->env(''));
+        $this->assertEquals('noVal', $confMan->env('', 'noVal'));
     }
 }

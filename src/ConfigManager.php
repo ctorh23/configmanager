@@ -77,6 +77,14 @@ final class ConfigManager implements ConfigManagerInterface
     }
 
     /**
+     * Reads environment variable.
+     */
+    public function env(string $var, mixed $default = null): mixed
+    {
+        return $_ENV[$var] ?? getenv($var) ?: $default;
+    }
+
+    /**
      * Reads configuration value with complex key.
      */
     private function getComplex(string $key): mixed
