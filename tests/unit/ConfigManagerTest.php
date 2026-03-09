@@ -161,4 +161,15 @@ final class ConfigManagerTest extends TestCase
         $this->assertSame(900, $confMan->get('session.timeout'));
         $this->assertNull($confMan->get('session.encrypt'));
     }
+
+    /**
+     * @covers ConfigManager::getComplex()
+     */
+    public function testGetDeeperLevelThanExisting(): void
+    {
+        $confMan = new ConfigManager(self::$fixturesDir);
+
+        $confMan->set('db.conn.mariadb', false);
+        $this->assertNull($confMan->get('db.conn.mariadb.host.master'));
+    }
 }
