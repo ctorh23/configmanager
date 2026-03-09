@@ -155,8 +155,15 @@ final class ConfigManager implements ConfigManagerInterface
         $keys = $this->splitKey($key);
         $confItem = &$this->settings;
         for ($i = 0, $cnt = \count($keys); $i < $cnt - 1; $i++) {
+            if (!\is_array($confItem)) {
+                $confItem = [];
+            }
             $confItem[$keys[$i]] ??= [];
             $confItem = &$confItem[$keys[$i]];
+        }
+
+        if (!\is_array($confItem)) {
+            $confItem = [];
         }
         $confItem[$keys[$cnt - 1]] = $value;
     }
