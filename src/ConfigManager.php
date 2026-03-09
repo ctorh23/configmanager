@@ -109,7 +109,7 @@ final class ConfigManager implements ConfigManagerInterface
         }
 
         $keys = $this->splitKey($key);
-        $filename = \array_shift($keys);
+        $filename = \array_shift($keys) ?? '';
 
         if (!isset($this->settings[$filename]) && !$this->loadFile($filename)) {
             return null;
