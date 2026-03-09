@@ -165,11 +165,13 @@ final class ConfigManagerTest extends TestCase
     /**
      * @covers ConfigManager::getComplex()
      */
-    public function testGetDeeperLevelThanExisting(): void
+    public function testGetKeyLevelIsDifferentThanExisting(): void
     {
         $confMan = new ConfigManager(self::$fixturesDir);
 
         $confMan->set('db.conn.mariadb', false);
+        $this->assertIsArray($confMan->get('db.conn'));
+        $this->assertFalse($confMan->get('db.conn.mariadb'));
         $this->assertNull($confMan->get('db.conn.mariadb.host.master'));
     }
 }
