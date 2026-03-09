@@ -117,7 +117,11 @@ final class ConfigManager implements ConfigManagerInterface
 
         $value = $this->settings[$filename];
         foreach ($keys as $k) {
-            $value = $value[$k] ?? null;
+            if (!\is_array($value) || !\array_key_exists($k, $value)) {
+                $value = null;
+                break;
+            }
+            $value = $value[$k];
         }
 
         return $value;
