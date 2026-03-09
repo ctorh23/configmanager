@@ -174,4 +174,20 @@ final class ConfigManagerTest extends TestCase
         $this->assertFalse($confMan->get('db.conn.mariadb'));
         $this->assertNull($confMan->get('db.conn.mariadb.host.master'));
     }
+
+    /**
+     * @covers ConfigManager::setComplex()
+     */
+    public function testOverwriteExistingKeyWithDifferentKeyLevel(): void
+    {
+        $confMan = new ConfigManager(self::$fixturesDir);
+        $confMan->set('db.conn.mariadb', false);
+        $confMan->set('db.conn.mariadb.host.master', 'masterdb.acme.com');
+        $this->assertIsArray($confMan->get('db.conn.mariadb'));
+        $this->assertEquals('masterdb.acme.com', $confMan->get('db.conn.mariadb.host.master'));
+        $confMan->set('db.conn', false);
+        $this->assertFalse($confMan->get('db.conn'));
+        $confMan->set('db.conn.pgsql', false);
+        $this->assertFalse($confMan->get('db.conn.pgsql'));
+    }
 }
