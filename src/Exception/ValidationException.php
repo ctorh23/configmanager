@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ctorh23\ConfigManager\Exception;
 
 /**
- * Thrown when the configuration key does not match the naming restrictions.
+ * Thrown when a domain-specific validation rule is violated.
  *
  * @author Stoyan Dimitrov
  */
@@ -34,5 +34,10 @@ final class ValidationException extends \DomainException implements ExceptionInt
     public static function badConfigFileContent(string $filePath): self
     {
         return new self(\sprintf("The configuration file '%s' must return an array!", $filePath));
+    }
+
+    public static function notScalarValue(mixed $value): self
+    {
+        return new self(\sprintf("The type of the value you passed is '%s', but only scalar values or null are allowed!", \gettype($value)));
     }
 }

@@ -221,7 +221,9 @@ final class ConfigManager implements ConfigManagerInterface
     }
 
     /**
-     * Explicit type casting.
+     * Explicit type casting. Accepts only string, number, boolean or null.
+     *
+     * @throws ValidationException
      */
     private function castValue(mixed $value): bool|int|float|string|null
     {
@@ -229,11 +231,15 @@ final class ConfigManager implements ConfigManagerInterface
             return 0 + $value;
         }
 
+        if (!\is_bool($value) && !\is_string($value) && !\is_null($value)) {
+            throw ValidationException::notScalarValue($value);
+        }
+
         return match ($value) {
-            'null' => null,
-            'true' => true,
-            'false' => false,
-            default => \strval($value),
+            null, 'null', '"null"', '`null`', "'null'" => null,
+            true, 'true', '"true"', '`true`', "'true'" => true,
+            false, 'false', '"false"', '`false`', "'false'" => false,
+            default => $value
         };
     }
 
