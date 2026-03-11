@@ -130,16 +130,22 @@ final class ConfigManagerTest extends TestCase
         $_ENV['PGSQL_PASSWORD'] = 'this-is-a-secret';
         \putenv('PGSQL_PORT=5432');
         \putenv('MYSQL_PERSISTENT=false');
+        \putenv('MYSQL_NOTPERSISTENT="true"');
         \putenv('MYSQL_PREFIX_INDEXES=true');
+        \putenv("MYSQL_NOTPREFIX_INDEXES='false'");
         \putenv('MYSQL_ENGINE=null');
+        \putenv('PGSQL_ENGINE=`null`');
         \putenv('SLA_UPTIME=99.9');
 
         $this->assertSame('app_user', $confMan->env('PGSQL_USER'));
         $this->assertSame('this-is-a-secret', $confMan->env('PGSQL_PASSWORD'));
         $this->assertSame(5432, $confMan->env('PGSQL_PORT'));
         $this->assertSame(false, $confMan->env('MYSQL_PERSISTENT'));
+        $this->assertSame(true, $confMan->env('MYSQL_NOTPERSISTENT'));
         $this->assertSame(true, $confMan->env('MYSQL_PREFIX_INDEXES'));
-        $this->assertSame(null, $confMan->env('MYSQL_ENGINE'));
+        $this->assertSame(false, $confMan->env('MYSQL_NOTPREFIX_INDEXES'));
+        $this->assertNull($confMan->env('MYSQL_ENGINE'));
+        $this->assertNull($confMan->env('PGSQL_ENGINE'));
         $this->assertSame(99.9, $confMan->env('SLA_UPTIME'));
         $this->assertSame('utf8', $confMan->env('PGSQL_CHARSET', 'utf8'));
         $this->assertNull($confMan->env('MYSQL_USER'));
